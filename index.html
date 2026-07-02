@@ -1,0 +1,1503 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MBS 静态练习赛</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #18212f;
+        --muted: #64748b;
+        --line: #d7dee9;
+        --bg: #f6f7f9;
+        --panel: #fff;
+        --accent: #0f766e;
+        --accent2: #2563eb;
+        --warn: #b45309;
+        --bad: #b91c1c;
+        --good: #15803d;
+        --shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans CJK SC",
+          "Microsoft YaHei", sans-serif;
+      }
+
+      button,
+      input,
+      select,
+      textarea {
+        font: inherit;
+      }
+
+      button {
+        border: 0;
+        cursor: pointer;
+      }
+
+      .topbar {
+        min-height: 96px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 18px;
+        padding: 22px clamp(16px, 4vw, 42px);
+        background: var(--panel);
+        border-bottom: 1px solid var(--line);
+      }
+
+      .eyebrow {
+        margin: 0 0 4px;
+        color: var(--accent);
+        font-size: 12px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        margin-bottom: 0;
+        font-size: clamp(24px, 3vw, 34px);
+        letter-spacing: 0;
+      }
+
+      main {
+        width: min(1400px, 100%);
+        margin: 0 auto;
+        padding: 18px clamp(14px, 3vw, 28px) 34px;
+      }
+
+      .top-actions,
+      .actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: end;
+      }
+
+      label {
+        display: grid;
+        gap: 6px;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      select,
+      input,
+      textarea {
+        min-height: 40px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 8px 10px;
+        background: #fff;
+        color: var(--ink);
+      }
+
+      textarea {
+        min-height: 92px;
+        resize: vertical;
+      }
+
+      .primary,
+      .secondary,
+      .ghost {
+        min-height: 40px;
+        border-radius: 8px;
+        padding: 0 14px;
+        font-weight: 900;
+      }
+
+      .primary {
+        background: var(--accent);
+        color: #fff;
+      }
+
+      .primary:disabled {
+        background: #94a3b8;
+        cursor: not-allowed;
+      }
+
+      .secondary {
+        background: #e6f3f1;
+        color: #0b5d56;
+      }
+
+      .ghost {
+        background: #e9edf4;
+        color: var(--ink);
+      }
+
+      .notice {
+        margin-bottom: 14px;
+        padding: 11px 13px;
+        border: 1px solid #c7d2fe;
+        border-left: 5px solid var(--accent2);
+        border-radius: 8px;
+        background: #eef2ff;
+        line-height: 1.55;
+      }
+
+      .status-strip {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(135px, 1fr));
+        gap: 10px;
+        margin-bottom: 14px;
+      }
+
+      .metric,
+      .panel,
+      .card,
+      .rank-row {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        box-shadow: var(--shadow);
+      }
+
+      .metric {
+        padding: 12px;
+      }
+
+      .metric span {
+        display: block;
+      }
+
+      .metric .label,
+      .helper,
+      th {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .metric .value {
+        margin-top: 5px;
+        font-size: 20px;
+        font-weight: 950;
+      }
+
+      .metric .sub {
+        margin-top: 3px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .tabs {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        padding: 4px 0 14px;
+      }
+
+      .tab {
+        white-space: nowrap;
+        padding: 10px 14px;
+        border-radius: 8px;
+        background: #e8edf4;
+        color: #334155;
+        font-weight: 900;
+      }
+
+      .tab.active {
+        background: var(--ink);
+        color: #fff;
+      }
+
+      .tab-panel {
+        display: none;
+      }
+
+      .tab-panel.active {
+        display: block;
+      }
+
+      .grid {
+        display: grid;
+        gap: 14px;
+      }
+
+      .command-grid {
+        grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.65fr);
+      }
+
+      .two-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .panel,
+      .card {
+        padding: 16px;
+      }
+
+      .panel h2,
+      .card h3 {
+        margin-bottom: 12px;
+      }
+
+      .kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .small-kpi {
+        min-height: 70px;
+        padding: 9px 10px;
+        border-left: 4px solid var(--accent2);
+        background: #f8fafc;
+      }
+
+      .small-kpi span {
+        display: block;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .small-kpi strong {
+        display: block;
+        margin-top: 3px;
+        font-size: 18px;
+      }
+
+      .decision-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 320px;
+        gap: 14px;
+      }
+
+      .decision-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(260px, 1fr));
+        gap: 12px;
+      }
+
+      .card header {
+        display: flex;
+        align-items: start;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 10px;
+      }
+
+      .card h3 {
+        margin: 0;
+        font-size: 15px;
+      }
+
+      .role-focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 2px rgba(15, 118, 110, 0.14), var(--shadow);
+      }
+
+      .tag {
+        border-radius: 999px;
+        padding: 4px 8px;
+        background: #e6f3f1;
+        color: #0f766e;
+        font-size: 12px;
+        font-weight: 900;
+        white-space: nowrap;
+      }
+
+      .input-row {
+        display: grid;
+        grid-template-columns: 1fr 116px;
+        gap: 8px;
+        align-items: center;
+      }
+
+      input[type="range"] {
+        min-height: 28px;
+        padding: 0;
+        accent-color: var(--accent);
+      }
+
+      .helper {
+        margin: 8px 0 0;
+        line-height: 1.45;
+      }
+
+      .rules-list {
+        display: grid;
+        gap: 10px;
+        line-height: 1.58;
+      }
+
+      .rules-list p {
+        margin: 0;
+        padding: 10px 12px;
+        background: #f8fafc;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+      }
+
+      th,
+      td {
+        padding: 10px 8px;
+        border-bottom: 1px solid var(--line);
+        text-align: right;
+        vertical-align: top;
+      }
+
+      th:first-child,
+      td:first-child {
+        text-align: left;
+      }
+
+      .rank-list {
+        display: grid;
+        gap: 8px;
+      }
+
+      .rank-row {
+        display: grid;
+        grid-template-columns: 54px minmax(180px, 1fr) repeat(5, minmax(105px, 0.45fr));
+        gap: 10px;
+        align-items: center;
+        padding: 12px;
+      }
+
+      .rank-row.player {
+        border-color: var(--accent);
+      }
+
+      .rank-num {
+        font-size: 22px;
+        font-weight: 950;
+      }
+
+      .bar {
+        height: 8px;
+        margin-top: 7px;
+        border-radius: 999px;
+        overflow: hidden;
+        background: #e5e7eb;
+      }
+
+      .bar span {
+        display: block;
+        height: 100%;
+        background: var(--accent);
+      }
+
+      .good {
+        color: var(--good);
+      }
+
+      .bad {
+        color: var(--bad);
+      }
+
+      .warn {
+        color: var(--warn);
+      }
+
+      .toast {
+        position: fixed;
+        right: 18px;
+        bottom: 18px;
+        max-width: min(420px, calc(100vw - 36px));
+        padding: 12px 14px;
+        border-radius: 8px;
+        background: var(--ink);
+        color: #fff;
+        box-shadow: var(--shadow);
+        font-weight: 900;
+        z-index: 10;
+      }
+
+      @media (max-width: 1100px) {
+        .status-strip,
+        .kpi-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .command-grid,
+        .decision-layout,
+        .two-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .rank-row {
+          grid-template-columns: 44px minmax(150px, 1fr) repeat(2, minmax(95px, 0.45fr));
+        }
+
+        .optional {
+          display: none;
+        }
+      }
+
+      @media (max-width: 720px) {
+        .topbar {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .top-actions > * {
+          flex: 1;
+        }
+
+        .status-strip,
+        .kpi-grid,
+        .decision-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .input-row {
+          grid-template-columns: 1fr;
+        }
+
+        .rank-row {
+          grid-template-columns: 38px minmax(0, 1fr);
+        }
+
+        .rank-row > div:not(:nth-child(1)):not(:nth-child(2)) {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Standalone Local Practice</p>
+        <h1>MBS 静态练习赛</h1>
+      </div>
+      <div class="top-actions">
+        <label>
+          角色
+          <select id="roleSelect">
+            <option value="ceo">CEO</option>
+            <option value="finance">Finance Manager</option>
+            <option value="sales">Sales Manager</option>
+            <option value="production">Production / Purchasing</option>
+          </select>
+        </label>
+        <button class="ghost" id="exportBtn" type="button">导出记录</button>
+        <button class="ghost" id="resetBtn" type="button">重开练习</button>
+      </div>
+    </header>
+
+    <main>
+      <div class="notice">
+        这是打开即用的本地静态版：不用服务器、不用 localhost、不用 192.168。数据只保存在这台设备的浏览器里，适合四个人围着一台设备练习，或每个人各自独立练习。
+      </div>
+
+      <section class="status-strip" id="statusStrip"></section>
+
+      <nav class="tabs" aria-label="主要视图">
+        <button class="tab active" data-tab="command" type="button">指挥台</button>
+        <button class="tab" data-tab="decision" type="button">决策输入</button>
+        <button class="tab" data-tab="reports" type="button">经营报表</button>
+        <button class="tab" data-tab="ranking" type="button">排名</button>
+        <button class="tab" data-tab="rules" type="button">规则速查</button>
+      </nav>
+
+      <section class="tab-panel active" id="command"></section>
+      <section class="tab-panel" id="decision"></section>
+      <section class="tab-panel" id="reports"></section>
+      <section class="tab-panel" id="ranking"></section>
+      <section class="tab-panel" id="rules"></section>
+    </main>
+
+    <div class="toast" id="toast" hidden></div>
+
+    <script>
+      const STORE_KEY = "mbs-static-practice-state-v1";
+      const ROLE_KEY = "mbs-static-role";
+      const moneyFmt = new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 });
+      const pctFmt = new Intl.NumberFormat("en-US", { style: "percent", maximumFractionDigits: 1 });
+      const decFmt = new Intl.NumberFormat("en-US", { maximumFractionDigits: 2 });
+
+      const roles = {
+        ceo: "CEO",
+        finance: "Finance Manager",
+        sales: "Sales Manager",
+        production: "Production / Purchasing",
+      };
+
+      const environments = [
+        {
+          quarter: 1,
+          priceIndex: 1,
+          growthRate: 1.02,
+          seasonalIndex: 96,
+          rawMaterialPrice: 1.28,
+          baseDemand: 5050000,
+          priceElasticity: "Moderate",
+          marketingImpact: "Moderate",
+          rdImpact: "Moderate",
+          maintenanceImpact: "Moderate",
+          timerMinutes: 40,
+        },
+        {
+          quarter: 2,
+          priceIndex: 1.035,
+          growthRate: 1.05,
+          seasonalIndex: 121,
+          rawMaterialPrice: 1.44,
+          baseDemand: 5400000,
+          priceElasticity: "High",
+          marketingImpact: "High",
+          rdImpact: "Moderate",
+          maintenanceImpact: "Moderate",
+          timerMinutes: 30,
+        },
+        {
+          quarter: 3,
+          priceIndex: 1.072,
+          growthRate: 1.01,
+          seasonalIndex: 108,
+          rawMaterialPrice: 1.63,
+          baseDemand: 5200000,
+          priceElasticity: "Moderate",
+          marketingImpact: "Moderate",
+          rdImpact: "High",
+          maintenanceImpact: "High",
+          timerMinutes: 30,
+        },
+        {
+          quarter: 4,
+          priceIndex: 1.096,
+          growthRate: 0.99,
+          seasonalIndex: 132,
+          rawMaterialPrice: 1.52,
+          baseDemand: 5550000,
+          priceElasticity: "High",
+          marketingImpact: "Moderate",
+          rdImpact: "Low",
+          maintenanceImpact: "Moderate",
+          timerMinutes: 30,
+        },
+      ];
+
+      const botProfiles = [
+        ["T02 North Star", "balanced"],
+        ["T03 Cocoa Max", "discount"],
+        ["T04 Victoria", "premium"],
+        ["T05 Harbour", "growth"],
+        ["T06 Apex", "cash"],
+        ["T07 Skyline", "balanced"],
+        ["T08 Jasper", "discount"],
+        ["T09 Meridian", "premium"],
+        ["T10 Horizon", "growth"],
+        ["T11 Bauhinia", "cash"],
+        ["T12 Summit", "balanced"],
+      ];
+
+      const fields = [
+        ["price", "Price", "sales", 3, 9, 0.1, "$", "", "价格影响潜在需求、市场占有率和利润率。官方资料范围为每件 3 至 9 美元。"],
+        ["marketing", "Marketing Expense", "sales", 0, 800000, 10000, "$", "", "营销支出提高产品形象和需求，约 30% 影响会递延，但过高会吞噬利润。"],
+        ["rd", "R&D Expense", "sales", 0, 700000, 10000, "$", "", "研发提升质量与潜在需求，约 60% 影响会递延，更适合前中期投资。"],
+        ["production", "Production Request", "production", 0, 1500000, 10000, "", " units", "生产请求会受原材料和产能限制。Model 2 最大约为一班产能的 1.5 倍。"],
+        ["rawPurchase", "Raw Materials Purchase", "production", 0, 2500000, 10000, "", " units", "本轮购买的原材料只能在下一轮使用，这是比赛中最容易漏掉的滞后。"],
+        ["equipment", "Equipment Investment", "production", 0, 3000000, 10000, "$", "", "每约 20 美元设备投资提升下一期 1 单位产能，同时会产生额外杂项费用。"],
+        ["maintenance", "Maintenance Expense", "production", 0, 600000, 10000, "$", "", "维修影响当轮 Material Conversion Rate，产量高或原料贵时更关键。"],
+        ["loan", "Bank Loan", "finance", 0, 4000000, 10000, "$", "", "贷款在回合开始发生；过高债务会推高利息，债务权益比达到 10 会破产。"],
+        ["repayment", "Repayment", "finance", 0, 4000000, 10000, "$", "", "还款受现金和现有负债限制。现金紧张时优先避免自动透支。"],
+        ["dividend", "Dividend", "finance", 0, 2500000, 10000, "$", "", "股息会影响估值，但 Owner's Equity 低于门槛时系统会限制实际派息。"],
+        ["forecastDemand", "Forecast Demand", "ceo", 0, 1500000, 10000, "", " units", "团队内部校准用，不直接改变系统结果；帮助 CEO 检查生产与营销是否匹配。"],
+      ];
+
+      let role = localStorage.getItem(ROLE_KEY) || "ceo";
+      let state = loadState();
+      let draft = { ...state.playerDraft };
+
+      document.getElementById("roleSelect").value = role;
+      document.getElementById("roleSelect").addEventListener("change", (event) => {
+        role = event.target.value;
+        localStorage.setItem(ROLE_KEY, role);
+        render();
+      });
+
+      document.getElementById("resetBtn").addEventListener("click", () => {
+        if (!confirm("确定重开练习？当前本机记录会被清除。")) return;
+        state = newGame();
+        draft = { ...state.playerDraft };
+        saveState();
+        render();
+        toast("已重开练习赛。");
+      });
+
+      document.getElementById("exportBtn").addEventListener("click", () => {
+        const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `mbs-practice-${new Date().toISOString().slice(0, 10)}.json`;
+        document.body.append(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      });
+
+      document.querySelectorAll(".tab").forEach((button) => {
+        button.addEventListener("click", () => {
+          document.querySelectorAll(".tab").forEach((tab) => tab.classList.toggle("active", tab === button));
+          document.querySelectorAll(".tab-panel").forEach((panel) => {
+            panel.classList.toggle("active", panel.id === button.dataset.tab);
+          });
+        });
+      });
+
+      render();
+
+      function newGame() {
+        return {
+          status: "decision",
+          quarter: 1,
+          createdAt: new Date().toISOString(),
+          playerDraft: defaultDecision(),
+          teams: [createCompany("T01 Your Team", "player", "balanced"), ...botProfiles.map(([name, profile]) => createCompany(name, "bot", profile))],
+          submissions: [],
+          events: [{ at: new Date().toISOString(), message: "Practice match started. Q1 uses 40 minutes in the real competition." }],
+        };
+      }
+
+      function loadState() {
+        try {
+          const raw = localStorage.getItem(STORE_KEY);
+          if (!raw) return newGame();
+          const parsed = JSON.parse(raw);
+          if (!parsed.teams || !parsed.playerDraft) return newGame();
+          return parsed;
+        } catch {
+          return newGame();
+        }
+      }
+
+      function saveState() {
+        localStorage.setItem(STORE_KEY, JSON.stringify(state));
+      }
+
+      function defaultDecision() {
+        return {
+          price: 6.4,
+          marketing: 150000,
+          rd: 90000,
+          production: 450000,
+          rawPurchase: 650000,
+          equipment: 120000,
+          maintenance: 85000,
+          loan: 0,
+          repayment: 0,
+          dividend: 0,
+          forecastDemand: 430000,
+          strategyNote: "稳健开局：中等价格、中等营销，先观察需求弹性。",
+        };
+      }
+
+      function createCompany(name, type, profile) {
+        return {
+          id: slug(name),
+          name,
+          type,
+          profile,
+          cash: 1547000,
+          finishedInventory: 51000,
+          rawInventory: 800000,
+          pendingRawPurchase: 0,
+          equipmentBookValue: 8300000,
+          capacity: 450000,
+          debt: 0,
+          equity: 11200000,
+          brandIndex: 1,
+          qualityIndex: 1,
+          previousMarketShare: 1 / 12,
+          previousPrice: 6.4,
+          bankrupt: false,
+          cumulative: {
+            revenue: 2808826,
+            netProfit: 432378,
+            salesVolume: 438879,
+            potentialDemand: 438879,
+            fillRateNumerator: 438879,
+            fillRateDenominator: 438879,
+            equipmentMaintenance: 0,
+            dsiNumerator: 0,
+            dsiDenominator: 1,
+          },
+          history: [
+            {
+              quarter: 0,
+              revenue: 2808826,
+              netProfit: 432378,
+              salesVolume: 438879,
+              potentialDemand: 438879,
+              production: 438879,
+              marketShare: 1 / 12,
+              cash: 1547000,
+              equity: 11200000,
+              debt: 0,
+              score: 0,
+              fillRate: 1,
+            },
+          ],
+        };
+      }
+
+      function render() {
+        renderStatus();
+        renderCommand();
+        renderDecision();
+        renderReports();
+        renderRanking();
+        renderRules();
+      }
+
+      function renderStatus() {
+        const company = state.teams[0];
+        const last = latest(company);
+        const env = environments[Math.min(state.quarter - 1, 3)];
+        const rank = rankings().findIndex((team) => team.id === company.id) + 1;
+        document.getElementById("statusStrip").innerHTML = [
+          metric("当前回合", state.status === "finished" ? "Finished" : `Q${state.quarter}`, state.status === "finished" ? "练习已结束" : `${env.timerMinutes} 分钟正式决策时间`),
+          metric("你的排名", `#${rank || "-"}`, `总分 ${fmt(last.score || 0)}`),
+          metric("现金", money(company.cash), `负债 ${money(company.debt)}`),
+          metric("净利润", money(last.netProfit || 0), `累计 ${money(company.cumulative.netProfit)}`),
+          metric("市场占有率", pctFmt.format(last.marketShare || company.previousMarketShare || 0), `Fill rate ${pctFmt.format(last.fillRate || 1)}`),
+          metric("下一期产能", fmt(company.capacity), `原料 ${fmt(company.rawInventory)} + 在途 ${fmt(company.pendingRawPurchase)}`),
+        ].join("");
+      }
+
+      function renderCommand() {
+        const company = state.teams[0];
+        const last = latest(company);
+        const env = environments[Math.min(state.quarter - 1, 3)];
+        document.getElementById("command").innerHTML = `
+          <div class="grid command-grid">
+            <section class="panel">
+              <h2>经营概览</h2>
+              <div class="kpi-grid">
+                ${smallKpi("Potential Demand", fmt(last.potentialDemand || 0), "当前收到订单")}
+                ${smallKpi("Sales Volume", fmt(last.salesVolume || 0), "实际销售")}
+                ${smallKpi("Finished Inventory", fmt(company.finishedInventory), "期末制成品")}
+                ${smallKpi("Debt / Equity", decFmt.format((company.debt || 0) / Math.max(1, company.equity || 1)), "达到 10 会破产")}
+                ${smallKpi("Revenue", money(last.revenue || 0), "本轮收入")}
+                ${smallKpi("COGS", money(last.cogs || 0), "材料 + 人工")}
+                ${smallKpi("Operating Expense", money(last.operatingExpense || 0), "营销、研发、维修等")}
+                ${smallKpi("Material Conversion", decFmt.format(last.conversionRate || 0.78), "维修会影响此项")}
+              </div>
+            </section>
+            <section class="panel">
+              <h2>本轮环境</h2>
+              ${kvTable([
+                ["Price Index", decFmt.format(env.priceIndex)],
+                ["Economic Growth", pctFmt.format(env.growthRate - 1)],
+                ["Seasonal Indicator", env.seasonalIndex],
+                ["Raw Material Price", `${money(env.rawMaterialPrice)} / unit`],
+                ["Price Elasticity", env.priceElasticity],
+                ["Marketing Impact", env.marketingImpact],
+                ["R&D Impact", env.rdImpact],
+              ])}
+            </section>
+            <section class="panel">
+              <h2>CEO 检查</h2>
+              <div class="rules-list">${warnings(company, last).map((line) => `<p>${line}</p>`).join("")}</div>
+            </section>
+            <section class="panel">
+              <h2>本机记录</h2>
+              <div class="rules-list">
+                ${state.events.slice(0, 6).map((event) => `<p><strong>${time(event.at)}</strong> ${event.message}</p>`).join("")}
+              </div>
+            </section>
+          </div>
+        `;
+      }
+
+      function renderDecision() {
+        document.getElementById("decision").innerHTML = `
+          <div class="decision-layout">
+            <section>
+              <div class="decision-grid">${fields.map(renderField).join("")}</div>
+              <section class="card" style="margin-top: 12px">
+                <label for="strategyNote">Strategy Note</label>
+                <textarea id="strategyNote" maxlength="600">${escapeHtml(draft.strategyNote || "")}</textarea>
+                <p class="helper">建议 CEO 记录本轮假设：需求、产能、现金、风险。静态版保存在本机浏览器。</p>
+              </section>
+              <div class="actions" style="margin-top: 14px">
+                <button class="secondary" id="saveBtn" type="button">保存本机草稿</button>
+                <button class="primary" id="submitBtn" type="button" ${state.status === "finished" ? "disabled" : ""}>提交本轮</button>
+              </div>
+            </section>
+            <aside class="panel">
+              <h2>${roles[role]} 视角</h2>
+              <div class="rules-list">${roleAdvice(role).map((line) => `<p>${line}</p>`).join("")}</div>
+            </aside>
+          </div>
+        `;
+        bindDecisionInputs();
+      }
+
+      function renderField(field) {
+        const [key, title, owner, min, max, step, prefix, suffix, helper] = field;
+        const value = draft[key] ?? 0;
+        const display = key === "price" ? decFmt.format(value) : Math.round(value);
+        return `
+          <article class="card ${owner === role || (role === "ceo" && owner === "ceo") ? "role-focus" : ""}">
+            <header>
+              <h3>${title}</h3>
+              <span class="tag">${roles[owner]}</span>
+            </header>
+            <div class="input-row">
+              <input data-key="${key}" type="range" min="${min}" max="${max}" step="${step}" value="${value}">
+              <input data-key="${key}" type="number" min="${min}" max="${max}" step="${step}" value="${display}">
+            </div>
+            <p class="helper">${prefix}${key === "price" ? decFmt.format(value) : fmt(value)}${suffix} · ${helper}</p>
+          </article>
+        `;
+      }
+
+      function bindDecisionInputs() {
+        document.querySelectorAll("[data-key]").forEach((input) => {
+          input.addEventListener("input", (event) => {
+            const key = event.target.dataset.key;
+            draft[key] = Number(event.target.value);
+            document.querySelectorAll(`[data-key="${key}"]`).forEach((paired) => {
+              if (paired !== event.target) paired.value = event.target.value;
+            });
+          });
+        });
+        document.getElementById("strategyNote").addEventListener("input", (event) => {
+          draft.strategyNote = event.target.value;
+        });
+        document.getElementById("saveBtn").addEventListener("click", () => {
+          state.playerDraft = sanitizeDecision(draft);
+          draft = { ...state.playerDraft };
+          saveState();
+          render();
+          toast("草稿已保存到本机浏览器。");
+        });
+        document.getElementById("submitBtn").addEventListener("click", () => {
+          if (state.status === "finished") return;
+          state.playerDraft = sanitizeDecision(draft);
+          draft = { ...state.playerDraft };
+          processQuarter(state.playerDraft);
+          saveState();
+          render();
+          toast(state.status === "finished" ? "四轮已完成，查看排名。" : "本轮已处理，报表已更新。");
+        });
+      }
+
+      function renderReports() {
+        const team = state.teams[0];
+        const last = latest(team);
+        document.getElementById("reports").innerHTML = `
+          <div class="grid two-grid">
+            <section class="panel">
+              <h2>Sales / Production Analysis</h2>
+              ${kvTable([
+                ["Potential Demand", fmt(last.potentialDemand || 0)],
+                ["Sales Volume", fmt(last.salesVolume || 0)],
+                ["Lost Sales", fmt(last.lostSales || 0)],
+                ["Production Volume", fmt(last.production || 0)],
+                ["Available for Sale", fmt(last.availableForSale || 0)],
+                ["Finished Goods Inventory", fmt(team.finishedInventory)],
+                ["Raw Material Inventory", fmt(team.rawInventory)],
+                ["Next Production Capacity", fmt(team.capacity)],
+              ])}
+            </section>
+            <section class="panel">
+              <h2>Income Statement</h2>
+              ${kvTable([
+                ["Revenue", money(last.revenue || 0)],
+                ["Material Cost", money(last.materialCost || 0)],
+                ["Labor Cost", money(last.laborCost || 0)],
+                ["COGS", money(last.cogs || 0)],
+                ["Gross Profit", money(last.grossProfit || 0)],
+                ["Operating Expense", money(last.operatingExpense || 0)],
+                ["Interest", money(last.interest || 0)],
+                ["Tax", money(last.tax || 0)],
+                ["Net Profit", money(last.netProfit || 0)],
+              ])}
+            </section>
+            <section class="panel">
+              <h2>Cash Flow Statement</h2>
+              ${kvTable([
+                ["Cash Balance", money(team.cash)],
+                ["Raw Material Purchase", money(last.rawPurchaseCost || 0)],
+                ["Equipment Investment", money(last.decision?.equipment || 0)],
+                ["Dividend Paid", money(last.dividend || 0)],
+                ["Bank Debt", money(team.debt)],
+                ["Current Ratio", decFmt.format(last.currentRatio || 0)],
+              ])}
+            </section>
+            <section class="panel">
+              <h2>Balance Sheet / Dashboard</h2>
+              ${kvTable([
+                ["Total Assets", money(last.totalAssets || 11200000)],
+                ["Owner's Equity", money(team.equity)],
+                ["Debt Ratio", decFmt.format(last.debtRatio || 0)],
+                ["ROA", pctFmt.format(last.roa || 0)],
+                ["Inventory Rate", pctFmt.format((team.finishedInventory || 0) / Math.max(1, last.salesVolume || 1))],
+                ["Days Sales of Inventory", decFmt.format(last.dsi || 0)],
+                ["Brand Index", decFmt.format(team.brandIndex)],
+                ["Quality Index", decFmt.format(team.qualityIndex)],
+              ])}
+            </section>
+          </div>
+        `;
+      }
+
+      function renderRanking() {
+        const rows = rankings();
+        const maxScore = Math.max(1, ...rows.map((team) => team.score));
+        document.getElementById("ranking").innerHTML = `
+          <section class="panel">
+            <h2>平衡计分卡排名</h2>
+            <div class="rank-list">
+              ${rows
+                .map(
+                  (team, index) => `
+                    <div class="rank-row ${team.type === "player" ? "player" : ""}">
+                      <div class="rank-num">#${index + 1}</div>
+                      <div>
+                        <strong>${team.name}${team.bankrupt ? " · Bankrupt" : ""}</strong>
+                        <div class="bar"><span style="width:${Math.max(4, (team.score / maxScore) * 100)}%"></span></div>
+                      </div>
+                      <div><span class="helper">Score</span><br><strong>${fmt(team.score)}</strong></div>
+                      <div><span class="helper">Market Share</span><br><strong>${pctFmt.format(team.marketShare || 0)}</strong></div>
+                      <div class="optional"><span class="helper">Net Profit</span><br><strong class="${team.netProfit >= 0 ? "good" : "bad"}">${money(team.netProfit)}</strong></div>
+                      <div class="optional"><span class="helper">Fill Rate</span><br><strong>${pctFmt.format(team.fillRate || 0)}</strong></div>
+                      <div class="optional"><span class="helper">Cash</span><br><strong>${money(team.cash)}</strong></div>
+                    </div>
+                  `,
+                )
+                .join("")}
+            </div>
+          </section>
+        `;
+      }
+
+      function renderRules() {
+        document.getElementById("rules").innerHTML = `
+          <section class="panel">
+            <h2>规则速查</h2>
+            <div class="rules-list">
+              <p>正式分组赛为 4 个 Quarter。Quarter 1 决策时间 40 分钟，Quarter 2 至 Quarter 4 各 30 分钟。</p>
+              <p>每队 4 名成员，CEO 负责最终提交；提交后不可修改。静态版用于同一设备练习，不支持跨设备同步。</p>
+              <p>分组赛常用 Model 2：原材料采购、生产、价格、营销、设备、维修、研发、股息等 8 个核心决策。本练习额外开放贷款和还款，用于完整财务演练。</p>
+              <p>潜在需求受价格、营销、研发、宏观经济、季节指标、产品质量、上一轮市场表现和对手决策影响。</p>
+              <p>本轮采购的原材料只能在下一轮生产中使用；产量取决于生产请求、可用原料、Material Conversion Rate 和产能上限。</p>
+              <p>维修主要影响 Material Conversion Rate；研发主要提升质量和潜在需求；设备投资提升下一期产能，但会产生额外费用。</p>
+              <p>评分按平衡计分卡模拟：净利润 35%、市场占有率 25%、Fill Rate 10%、设备与维修 10%、ROA 10%、库存天数 10%。</p>
+              <p>债务权益比达到 10 会破产；现金不足时系统会自动借款并在后续产生利息压力。</p>
+            </div>
+          </section>
+        `;
+      }
+
+      function processQuarter(playerDecision) {
+        if (state.quarter > 4) return;
+        const env = environments[state.quarter - 1];
+        const decisions = new Map();
+        state.teams.forEach((company, index) => {
+          decisions.set(company.id, company.type === "player" ? sanitizeDecision(playerDecision) : makeBotDecision(company, env, index));
+        });
+
+        const active = state.teams.filter((team) => !team.bankrupt);
+        const avgPrice = active.reduce((sum, team) => sum + decisions.get(team.id).price, 0) / Math.max(1, active.length);
+        const avgBrand = active.reduce((sum, team) => sum + team.brandIndex, 0) / Math.max(1, active.length);
+        const avgQuality = active.reduce((sum, team) => sum + team.qualityIndex, 0) / Math.max(1, active.length);
+        const elasticity = env.priceElasticity === "High" ? 2.2 : env.priceElasticity === "Low" ? 1.1 : 1.65;
+        const marketingImpact = env.marketingImpact === "High" ? 0.34 : env.marketingImpact === "Low" ? 0.18 : 0.25;
+        const rdImpact = env.rdImpact === "High" ? 0.27 : env.rdImpact === "Low" ? 0.14 : 0.21;
+        const attractiveness = new Map();
+        let totalAttractiveness = 0;
+
+        active.forEach((team) => {
+          const d = decisions.get(team.id);
+          const priceScore = Math.exp(-elasticity * ((d.price - avgPrice) / avgPrice));
+          const marketingScore = 1 + marketingImpact * Math.log1p(d.marketing / 100000) + 0.22 * team.brandIndex / avgBrand;
+          const qualityScore = 1 + rdImpact * Math.log1p(d.rd / 100000) + 0.25 * team.qualityIndex / avgQuality;
+          const momentum = 0.82 + team.previousMarketShare * active.length * 0.18;
+          const score = priceScore * marketingScore * qualityScore * momentum;
+          attractiveness.set(team.id, score);
+          totalAttractiveness += score;
+        });
+
+        const marketDemand = env.baseDemand * env.growthRate * (env.seasonalIndex / 100);
+        const provisional = new Map();
+        active.forEach((team) => provisional.set(team.id, marketDemand * (attractiveness.get(team.id) / totalAttractiveness)));
+
+        const prelim = new Map();
+        let stolenDemand = 0;
+        let openSupplyWeight = 0;
+        active.forEach((team) => {
+          const operational = runOperations(team, decisions.get(team.id), env, provisional.get(team.id), false);
+          prelim.set(team.id, operational);
+          const shortage = Math.max(0, operational.potentialDemand - operational.salesVolume);
+          const spare = Math.max(0, operational.availableForSale - operational.salesVolume);
+          stolenDemand += shortage * 0.7;
+          if (spare > 0) openSupplyWeight += spare * attractiveness.get(team.id);
+        });
+
+        const results = [];
+        active.forEach((team) => {
+          const p = prelim.get(team.id);
+          const spare = Math.max(0, p.availableForSale - p.salesVolume);
+          const extra = stolenDemand > 0 && spare > 0 && openSupplyWeight > 0 ? stolenDemand * ((spare * attractiveness.get(team.id)) / openSupplyWeight) : 0;
+          results.push(runOperations(team, decisions.get(team.id), env, provisional.get(team.id) + extra, true));
+        });
+
+        const totalSales = results.reduce((sum, result) => sum + result.salesVolume, 0) || 1;
+        results.forEach((result) => {
+          const team = state.teams.find((candidate) => candidate.id === result.companyId);
+          result.marketShare = result.salesVolume / totalSales;
+          applyResult(team, result, decisions.get(team.id));
+        });
+
+        updateScores();
+        state.submissions.push({
+          quarter: env.quarter,
+          at: new Date().toISOString(),
+          playerDecision: sanitizeDecision(playerDecision),
+        });
+        state.events.unshift({ at: new Date().toISOString(), message: `Quarter ${env.quarter} processed. Reports and ranking are updated.` });
+        state.quarter += 1;
+        state.status = state.quarter > 4 ? "finished" : "decision";
+        state.playerDraft = nextSuggestedDraft(state.teams[0], state.playerDraft);
+        draft = { ...state.playerDraft };
+      }
+
+      function runOperations(team, d, env, potentialDemand, includeFinance) {
+        const availableRaw = team.rawInventory + team.pendingRawPurchase;
+        const maintenanceLift = env.maintenanceImpact === "High" ? 0.045 : env.maintenanceImpact === "Low" ? 0.025 : 0.035;
+        const conversionRate = Math.min(0.96, 0.74 + maintenanceLift * Math.log1p(d.maintenance / 80000) + 0.012 * team.qualityIndex);
+        const capacityLimit = team.capacity * 1.5;
+        const rawLimit = availableRaw * conversionRate;
+        const production = Math.floor(Math.min(d.production, capacityLimit, rawLimit));
+        const rawUsed = production / conversionRate;
+        const availableForSale = team.finishedInventory + production;
+        const salesVolume = Math.floor(Math.min(availableForSale, potentialDemand));
+        const finishedInventory = Math.max(0, availableForSale - salesVolume);
+        const revenue = salesVolume * d.price;
+        const materialCost = rawUsed * env.rawMaterialPrice;
+        const regularProduction = Math.min(production, team.capacity);
+        const overtimeProduction = Math.max(0, production - team.capacity);
+        const laborCost = (regularProduction * 0.85 + overtimeProduction * 1.275) * env.priceIndex;
+        const depreciation = team.equipmentBookValue * 0.025;
+        const adminExpense = (150000 + 0.32 * team.capacity) * env.priceIndex;
+        const purchaseOps = purchasingFee(d.rawPurchase) * env.priceIndex;
+        const warehouseFinished = finishedInventory * 0.5 * (1 / 3);
+        const warehouseRaw = Math.max(0, availableRaw - rawUsed) * env.rawMaterialPrice * 0.05;
+        const equipmentMisc = 0.0000001 * d.equipment * d.equipment;
+        const cogs = materialCost + laborCost;
+        const grossProfit = revenue - cogs;
+        const operatingExpense = d.marketing + d.rd + d.maintenance + adminExpense + purchaseOps + warehouseFinished + warehouseRaw + equipmentMisc + depreciation;
+        let debt = team.debt;
+        let cash = team.cash;
+        const repayment = Math.min(d.repayment, debt, cash);
+        if (includeFinance) {
+          cash += d.loan - repayment;
+          debt += d.loan - repayment;
+        }
+        const debtToEquity = debt / Math.max(1, team.equity);
+        const loanRate = Math.min(0.2, 0.07 * (1 + 0.5 * debtToEquity));
+        const interest = debt * loanRate / 4;
+        const ebt = grossProfit - operatingExpense - interest;
+        const tax = Math.max(0, ebt * taxRate(ebt));
+        const allowedDividend = team.equity > 10000000 ? Math.min(d.dividend, Math.max(0, cash * 0.75)) : 0;
+        const netProfit = ebt - tax;
+        const rawPurchaseCost = d.rawPurchase * env.rawMaterialPrice;
+
+        if (includeFinance) {
+          cash += revenue - d.marketing - d.rd - d.maintenance - purchaseOps - adminExpense - warehouseFinished - warehouseRaw;
+          cash -= rawPurchaseCost + d.equipment + equipmentMisc + interest + tax + allowedDividend;
+          if (cash < 0) {
+            debt += Math.abs(cash);
+            cash = 0;
+          }
+        }
+
+        const rawInventory = Math.max(0, availableRaw - rawUsed);
+        const currentAssets = cash + finishedInventory * 3 * env.priceIndex + rawInventory * env.rawMaterialPrice;
+        const equipmentBookValue = (team.equipmentBookValue + d.equipment) * 0.975;
+        const totalAssets = currentAssets + equipmentBookValue;
+        const equity = totalAssets - debt;
+        const debtRatio = debt / Math.max(1, equity);
+        const nextCapacity = team.capacity * 0.975 + d.equipment / (20 * env.priceIndex);
+
+        return {
+          companyId: team.id,
+          quarter: env.quarter,
+          decision: d,
+          conversionRate,
+          potentialDemand,
+          production,
+          rawUsed,
+          availableForSale,
+          salesVolume,
+          lostSales: Math.max(0, potentialDemand - salesVolume),
+          finishedInventory,
+          rawInventory,
+          pendingRawPurchase: d.rawPurchase,
+          capacity: nextCapacity,
+          revenue,
+          materialCost,
+          laborCost,
+          cogs,
+          grossProfit,
+          operatingExpense,
+          rawPurchaseCost,
+          interest,
+          tax,
+          dividend: allowedDividend,
+          netProfit,
+          cash,
+          debt,
+          currentAssets,
+          totalAssets,
+          equity,
+          equipmentBookValue,
+          debtRatio,
+          currentRatio: currentAssets / Math.max(1, debt),
+          roa: netProfit / Math.max(1, totalAssets),
+          fillRate: salesVolume / Math.max(1, potentialDemand),
+          dsi: cogs > 0 ? (365 * (finishedInventory * 3 * env.priceIndex)) / cogs : 0,
+          score: 0,
+          bankrupt: debtRatio >= 10 || equity <= 0,
+        };
+      }
+
+      function applyResult(team, result, decision) {
+        team.cash = result.cash;
+        team.finishedInventory = result.finishedInventory;
+        team.rawInventory = result.rawInventory;
+        team.pendingRawPurchase = result.pendingRawPurchase;
+        team.equipmentBookValue = result.equipmentBookValue;
+        team.capacity = result.capacity;
+        team.debt = result.debt;
+        team.equity = result.equity;
+        team.qualityIndex = 0.6 * team.qualityIndex + 0.4 * (1 + Math.log1p(decision.rd / 120000) * 0.18);
+        team.brandIndex = 0.7 * team.brandIndex + 0.3 * (1 + Math.log1p(decision.marketing / 120000) * 0.16);
+        team.previousMarketShare = result.marketShare;
+        team.previousPrice = decision.price;
+        team.bankrupt = result.bankrupt;
+        team.cumulative.revenue += result.revenue;
+        team.cumulative.netProfit += result.netProfit;
+        team.cumulative.salesVolume += result.salesVolume;
+        team.cumulative.potentialDemand += result.potentialDemand;
+        team.cumulative.fillRateNumerator += result.salesVolume;
+        team.cumulative.fillRateDenominator += result.potentialDemand;
+        team.cumulative.equipmentMaintenance += decision.equipment + decision.maintenance;
+        team.cumulative.dsiNumerator += result.dsi;
+        team.cumulative.dsiDenominator += 1;
+        team.history.push(result);
+      }
+
+      function updateScores() {
+        state.teams.forEach((team) => (team._score = 0));
+        const totalCompanySales = state.teams.reduce((sum, team) => sum + team.cumulative.salesVolume, 0) || 1;
+        const metrics = state.teams.map((team) => {
+          const last = latest(team);
+          return {
+            team,
+            netProfit: team.cumulative.netProfit,
+            marketShare: team.cumulative.salesVolume / totalCompanySales,
+            fillRate: team.cumulative.fillRateNumerator / Math.max(1, team.cumulative.fillRateDenominator),
+            learning: team.cumulative.equipmentMaintenance,
+            roa: team.cumulative.netProfit / Math.max(1, last.totalAssets || 11200000),
+            dsi: team.cumulative.dsiNumerator / Math.max(1, team.cumulative.dsiDenominator),
+          };
+        });
+        [
+          ["netProfit", 35, true],
+          ["marketShare", 25, true],
+          ["fillRate", 10, true],
+          ["learning", 10, true],
+          ["roa", 10, true],
+          ["dsi", 10, false],
+        ].forEach(([key, weight, higherBetter]) => {
+          const values = metrics.map((item) => item[key]).filter(Number.isFinite);
+          const min = Math.min(...values);
+          const max = Math.max(...values);
+          metrics.forEach((item) => {
+            let normalized = 1;
+            if (max !== min) normalized = higherBetter ? (item[key] - min) / (max - min) : (max - item[key]) / (max - min);
+            item.team._score += normalized * weight;
+          });
+        });
+        state.teams.forEach((team) => {
+          latest(team).score = Math.max(0, (team._score || 0) - (team.bankrupt ? 40 : 0));
+          delete team._score;
+        });
+      }
+
+      function makeBotDecision(company, env, index) {
+        const last = latest(company);
+        const shortage = Math.max(0, (last.potentialDemand || 0) - (last.salesVolume || 0));
+        const inventoryPressure = company.finishedInventory / Math.max(1, last.salesVolume || 1);
+        let price = company.previousPrice;
+        let marketing = 150000;
+        let rd = 90000;
+        let production = Math.max(360000, last.potentialDemand || 430000);
+        let rawPurchase = production * 1.2;
+        let equipment = 120000;
+        let maintenance = 85000;
+        let dividend = 0;
+        let loan = 0;
+        let repayment = 0;
+
+        if (company.profile === "discount") {
+          price = 5.8 + 0.12 * env.quarter + (index % 2) * 0.15;
+          marketing = 210000 + 25000 * env.quarter;
+          rd = 65000;
+          production *= 1.14;
+          rawPurchase *= 1.2;
+        } else if (company.profile === "premium") {
+          price = 7.1 + 0.08 * env.quarter + (index % 3) * 0.08;
+          marketing = 130000 + 18000 * env.quarter;
+          rd = 165000 + 22000 * env.quarter;
+          production *= 0.96;
+          rawPurchase *= 1.05;
+        } else if (company.profile === "growth") {
+          price = 6.35 + 0.05 * env.quarter;
+          marketing = 220000 + 35000 * env.quarter;
+          rd = 150000 + 25000 * env.quarter;
+          production *= 1.2;
+          rawPurchase *= 1.3;
+          equipment = 240000 + 60000 * env.quarter;
+        } else if (company.profile === "cash") {
+          price = 6.75 + 0.1 * env.quarter;
+          marketing = 95000 + 12000 * env.quarter;
+          rd = 45000;
+          production *= 0.92;
+          rawPurchase *= 0.9;
+          maintenance = 65000;
+          repayment = Math.min(company.cash * 0.15, company.debt * 0.35);
+        } else {
+          price = 6.35 + 0.08 * env.quarter + (index % 3 - 1) * 0.08;
+          marketing = 150000 + 22000 * env.quarter;
+          rd = 90000 + 18000 * env.quarter;
+          production *= 1.04;
+          rawPurchase *= 1.1;
+        }
+
+        if (shortage > 40000) {
+          production += shortage * 0.65;
+          rawPurchase += shortage * 0.85;
+          equipment += 100000;
+        }
+        if (inventoryPressure > 0.25) {
+          price -= 0.22;
+          marketing += 50000;
+          production *= 0.86;
+        }
+        if (company.cash < 450000) loan = 500000;
+        if (env.quarter === 4) {
+          equipment *= 0.25;
+          rawPurchase *= 0.35;
+          if (company.equity > 10500000 && company.cash > 1200000) dividend = company.cash * 0.16;
+        }
+
+        return sanitizeDecision({
+          price,
+          marketing,
+          rd,
+          production,
+          rawPurchase,
+          equipment,
+          maintenance,
+          loan,
+          repayment,
+          dividend,
+          forecastDemand: production,
+          strategyNote: `${company.profile} bot`,
+        });
+      }
+
+      function nextSuggestedDraft(team, previous) {
+        const last = latest(team);
+        const next = { ...previous };
+        if (!last || last.quarter === 0) return next;
+        if (last.lostSales > 30000) {
+          next.production = Math.round(Math.min(1450000, previous.production + last.lostSales * 0.7));
+          next.rawPurchase = Math.round(Math.min(2400000, previous.rawPurchase + last.lostSales * 0.9));
+          next.equipment = Math.round(previous.equipment + 80000);
+        }
+        if (last.finishedInventory > last.salesVolume * 0.25) {
+          next.production = Math.round(previous.production * 0.85);
+          next.marketing = Math.round(previous.marketing + 40000);
+          next.price = Math.max(3, Math.round((previous.price - 0.15) * 100) / 100);
+        }
+        if (last.netProfit < 0) {
+          next.marketing = Math.round(previous.marketing * 0.88);
+          next.rd = Math.round(previous.rd * 0.85);
+          next.dividend = 0;
+        }
+        if (state.quarter === 4) {
+          next.equipment = Math.round(previous.equipment * 0.35);
+          next.rawPurchase = Math.round(previous.rawPurchase * 0.45);
+        }
+        next.forecastDemand = Math.round(last.potentialDemand * 1.02);
+        next.strategyNote = "已根据上一轮报告自动生成起点，请由各角色复核后再提交。";
+        return sanitizeDecision(next);
+      }
+
+      function rankings() {
+        return state.teams
+          .map((team) => {
+            const last = latest(team);
+            return {
+              id: team.id,
+              name: team.name,
+              type: team.type,
+              bankrupt: team.bankrupt,
+              score: last.score || 0,
+              marketShare: last.marketShare || team.previousMarketShare,
+              revenue: last.revenue || 0,
+              netProfit: last.netProfit || 0,
+              cash: team.cash,
+              debt: team.debt,
+              equity: team.equity,
+              fillRate: last.fillRate || 1,
+            };
+          })
+          .sort((a, b) => b.score - a.score);
+      }
+
+      function sanitizeDecision(input) {
+        const d = input || {};
+        return {
+          price: Math.round(clamp(d.price, 3, 9) * 100) / 100,
+          marketing: whole(clamp(d.marketing, 0, 800000)),
+          rd: whole(clamp(d.rd, 0, 700000)),
+          production: whole(clamp(d.production, 0, 1500000)),
+          rawPurchase: whole(clamp(d.rawPurchase, 0, 2500000)),
+          equipment: whole(clamp(d.equipment, 0, 3000000)),
+          maintenance: whole(clamp(d.maintenance, 0, 600000)),
+          loan: whole(clamp(d.loan, 0, 4000000)),
+          repayment: whole(clamp(d.repayment, 0, 4000000)),
+          dividend: whole(clamp(d.dividend, 0, 2500000)),
+          forecastDemand: whole(clamp(d.forecastDemand, 0, 1500000)),
+          strategyNote: String(d.strategyNote || "").slice(0, 600),
+        };
+      }
+
+      function purchasingFee(quantity) {
+        if (quantity <= 0) return 0;
+        if (quantity <= 500000) return 40000;
+        if (quantity <= 1000000) return 80000;
+        if (quantity <= 1500000) return 120000;
+        if (quantity <= 2000000) return 160000;
+        return 200000;
+      }
+
+      function taxRate(ebt) {
+        if (ebt <= 0) return 0;
+        if (ebt < 200000) return 0.22;
+        if (ebt < 500000) return 0.35;
+        if (ebt < 1000000) return 0.48;
+        return 0.55;
+      }
+
+      function warnings(company, last) {
+        const lines = [];
+        if (state.status === "finished") lines.push("练习赛已结束。可以在排名页复盘四轮策略，也可以重开练习。");
+        if ((last.lostSales || 0) > 30000) lines.push(`上一轮缺货 ${fmt(last.lostSales)} 件，检查生产、原料和产能是否太保守。`);
+        if (company.finishedInventory > Math.max(60000, (last.salesVolume || 1) * 0.25)) lines.push("制成品库存偏高，可能需要降低生产、调整价格或加大有效营销。");
+        if ((last.netProfit || 0) < 0) lines.push("上一轮亏损，提交前重点检查价格、营销/研发、维修和设备投资是否覆盖成本。");
+        if ((company.debt || 0) / Math.max(1, company.equity || 1) > 2) lines.push("债务权益比偏高，继续扩张前先评估利息和破产风险。");
+        if (!lines.length) lines.push("当前没有明显红灯。继续用需求、供给、利润率、现金流四条线交叉检查。");
+        return lines;
+      }
+
+      function roleAdvice(currentRole) {
+        if (currentRole === "finance") {
+          return ["提交前检查现金、负债、利息、税和股息。现金不足会触发自动借款。", "如果净利润为负，不要用贷款掩盖经营问题，优先压缩低回报费用。", "股息只在现金充足、权益健康、最后冲刺有意义时考虑。"];
+        }
+        if (currentRole === "sales") {
+          return ["价格不能只看销量；同时估算单位成本、毛利率和净利润率。", "营销可以推高需求，但如果生产跟不上，会把订单送给对手。", "研发适合支撑高价和中长期需求，最后一轮要谨慎加码。"];
+        }
+        if (currentRole === "production") {
+          return ["先看上一轮缺货还是库存，再决定生产请求。", "原材料有一轮滞后，本轮采购是在为下一轮准备。", "维修在产量高、原料贵时价值更大；设备投资要看剩余回合和现金。"];
+        }
+        return ["先确认本轮最大问题：缺货、库存、利润率、现金，还是排名落后。", "让销售给出需求假设，生产采购验证可供给，财务最后检查现金风险。", "Quarter 4 不再盲目做长期投资，重点是利润、库存、债务和最终得分。"];
+      }
+
+      function metric(label, value, sub) {
+        return `<div class="metric"><span class="label">${label}</span><span class="value">${value}</span><span class="sub">${sub}</span></div>`;
+      }
+
+      function smallKpi(label, value, sub) {
+        return `<div class="small-kpi"><span>${label}</span><strong>${value}</strong><span>${sub}</span></div>`;
+      }
+
+      function kvTable(rows) {
+        return `<table><tbody>${rows.map(([key, value]) => `<tr><td>${key}</td><td>${value}</td></tr>`).join("")}</tbody></table>`;
+      }
+
+      function latest(team) {
+        return team.history[team.history.length - 1] || {};
+      }
+
+      function slug(value) {
+        return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      }
+
+      function clamp(value, min, max) {
+        const n = Number(value);
+        if (!Number.isFinite(n)) return min;
+        return Math.max(min, Math.min(max, n));
+      }
+
+      function whole(value) {
+        return Math.round(Number(value) || 0);
+      }
+
+      function fmt(value) {
+        return moneyFmt.format(Math.round(Number(value) || 0));
+      }
+
+      function money(value) {
+        return `$${fmt(value)}`;
+      }
+
+      function time(value) {
+        return new Date(value).toLocaleTimeString("zh-HK", { hour: "2-digit", minute: "2-digit" });
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;");
+      }
+
+      function toast(message) {
+        const el = document.getElementById("toast");
+        el.textContent = message;
+        el.hidden = false;
+        clearTimeout(toast.timer);
+        toast.timer = setTimeout(() => {
+          el.hidden = true;
+        }, 2600);
+      }
+    </script>
+  </body>
+</html>
