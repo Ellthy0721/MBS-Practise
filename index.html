@@ -101,6 +101,17 @@
         font-weight: 800;
       }
 
+      .top-actions label {
+        font-size: 15px;
+        font-weight: 950;
+      }
+
+      .top-actions select,
+      .top-actions input {
+        font-size: 16px;
+        font-weight: 750;
+      }
+
       select,
       input,
       textarea {
@@ -504,6 +515,32 @@
 
       .api-key-input {
         width: min(280px, 42vw);
+        transition: background 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+      }
+
+      .api-key-input.connected {
+        border-color: var(--good);
+        background: #dcfce7;
+        box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.14);
+      }
+
+      .api-key-input.testing {
+        border-color: var(--warn);
+        background: #fffbeb;
+      }
+
+      .api-status {
+        min-height: 16px;
+        font-size: 13px;
+        font-weight: 900;
+      }
+
+      .api-status.connected {
+        color: var(--good);
+      }
+
+      .api-status.failed {
+        color: var(--bad);
       }
 
       .ai-drawer {
@@ -616,6 +653,7 @@
         <label>
           DeepSeek API Key
           <input class="api-key-input" id="apiKeyInput" type="password" autocomplete="off" placeholder="&#20165;&#20445;&#23384;&#22312;&#26412;&#26426;" />
+          <span class="api-status" id="apiStatus">DeepSeek &#26410;&#36830;&#25509;</span>
         </label>
         <button class="secondary" id="aiDrawerBtn" type="button">AI &#21161;&#25163;</button>
         <button class="ghost" id="exportBtn" type="button">&#23548;&#20986;&#35760;&#24405;</button>
@@ -730,6 +768,9 @@
       let role = localStorage.getItem(ROLE_KEY) || "ceo";
       let competitionMode = localStorage.getItem(MODE_KEY) || "robot";
       let deepseekKey = localStorage.getItem(DEEPSEEK_KEY) || "";
+      let deepseekConnected = false;
+      let apiTestTimer = null;
+      let apiTestRun = 0;
       let aiDrawerOpen = false;
       let aiBusy = false;
       let aiOutput = localStorage.getItem(AI_OUTPUT_KEY) || "AI assistant output will appear here.";
@@ -753,10 +794,19 @@
       });
 
       document.getElementById("apiKeyInput").value = deepseekKey;
+      updateApiStatus(deepseekKey ? "idle" : "empty");
+      if (deepseekKey) scheduleDeepSeekTest();
       document.getElementById("apiKeyInput").addEventListener("input", (event) => {
         deepseekKey = event.target.value.trim();
-        if (deepseekKey) localStorage.setItem(DEEPSEEK_KEY, deepseekKey);
-        else localStorage.removeItem(DEEPSEEK_KEY);
+        deepseekConnected = false;
+        if (deepseekKey) {
+          localStorage.setItem(DEEPSEEK_KEY, deepseekKey);
+          updateApiStatus("testing");
+          scheduleDeepSeekTest();
+        } else {
+          localStorage.removeItem(DEEPSEEK_KEY);
+          updateApiStatus("empty");
+        }
       });
 
       document.getElementById("aiDrawerBtn").addEventListener("click", () => {
@@ -1051,6 +1101,55 @@
         return String(value || "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
       }
 
+
+      function scheduleDeepSeekTest() {
+        clearTimeout(apiTestTimer);
+        apiTestTimer = setTimeout(() => testDeepSeekConnection(), 650);
+      }
+
+      async function testDeepSeekConnection() {
+        const keyAtStart = deepseekKey;
+        if (!keyAtStart) {
+          updateApiStatus("empty");
+          return;
+        }
+        const runId = ++apiTestRun;
+        updateApiStatus("testing");
+        try {
+          await callDeepSeek(AI_MODELS.fast, [
+            { role: "system", content: "Reply with OK only." },
+            { role: "user", content: "connection test" },
+          ], { max_tokens: 8, temperature: 0 });
+          if (runId !== apiTestRun || keyAtStart !== deepseekKey) return;
+          deepseekConnected = true;
+          updateApiStatus("connected");
+        } catch (error) {
+          if (runId !== apiTestRun || keyAtStart !== deepseekKey) return;
+          deepseekConnected = false;
+          updateApiStatus("failed", error.message || "Connection failed");
+        }
+      }
+
+      function updateApiStatus(status, detail = "") {
+        const input = document.getElementById("apiKeyInput");
+        const statusEl = document.getElementById("apiStatus");
+        if (!input || !statusEl) return;
+        input.classList.remove("connected", "testing");
+        statusEl.classList.remove("connected", "failed");
+        if (status === "connected") {
+          input.classList.add("connected");
+          statusEl.classList.add("connected");
+          statusEl.textContent = "DeepSeek \u5df2\u8fde\u63a5";
+        } else if (status === "testing") {
+          input.classList.add("testing");
+          statusEl.textContent = "DeepSeek \u8fde\u63a5\u6d4b\u8bd5\u4e2d...";
+        } else if (status === "failed") {
+          statusEl.classList.add("failed");
+          statusEl.textContent = detail.includes("Failed to fetch") ? "DeepSeek \u8fde\u63a5\u5931\u8d25\uff1a\u6d4f\u89c8\u5668\u53ef\u80fd\u62e6\u622a\u8de8\u57df\u8bf7\u6c42" : "DeepSeek \u8fde\u63a5\u5931\u8d25";
+        } else {
+          statusEl.textContent = deepseekKey ? "DeepSeek \u5f85\u6d4b\u8bd5" : "DeepSeek \u672a\u8fde\u63a5";
+        }
+      }
 
       function renderStatus() {
         const company = state.teams[0];
