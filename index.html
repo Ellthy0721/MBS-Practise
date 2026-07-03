@@ -376,6 +376,15 @@
         color: #fff;
       }
 
+      .report-link small {
+        display: block;
+        margin-top: 2px;
+        color: inherit;
+        font-size: 12px;
+        font-weight: 700;
+        opacity: 0.78;
+      }
+
       .report-content {
         display: grid;
         gap: 14px;
@@ -644,17 +653,17 @@
 
       const REPORT_VIEW_KEY = "mbs-static-report-view";
       const reportViews = [
-        ["salesStatus", "Sales status"],
-        ["salesProduction", "Sales/Production Analysis"],
-        ["costStructure", "Cost structure"],
-        ["breakeven", "Breakeven point"],
-        ["financeRatio", "Finance ratio"],
-        ["marketShare", "Market share"],
-        ["netProfit", "Net profit"],
-        ["salesTrend", "Sales Trend"],
-        ["incomeStatement", "Income statement"],
-        ["balanceSheet", "Balance sheet"],
-        ["cashFlow", "Cash flow"],
+        ["salesStatus", "Sales status", "销售状态", "显示各队产品质量、产品形象、价格、销量和市场份额，用来判断对手是靠价格、品牌还是质量抢市场。"],
+        ["salesProduction", "Sales/Production Analysis", "销售/生产分析", "显示需求、销量、产量、下一期产能、原材料库存和制成品库存，用来判断缺货、库存积压或产能不足。"],
+        ["costStructure", "Cost structure", "成本结构", "拆开收入、单位成本、毛利、运营费用和税前利润，用来判断当前定价能否覆盖成本。"],
+        ["breakeven", "Breakeven point", "盈亏平衡点", "显示固定成本、变动成本、贡献毛利率和盈亏平衡收入，用来判断最低安全销售额。"],
+        ["financeRatio", "Finance ratio", "财务比率", "显示流动比率、速动比率、库存周转、资产周转、债务比率、利息保障倍数、利润率、ROA 和 ROE，用来判断偿债能力和破产风险。"],
+        ["marketShare", "Market share", "市场份额", "按回合比较各队市场份额变化，用来复盘价格、营销、质量和供给策略是否抢到市场。"],
+        ["netProfit", "Net profit", "净利润", "按回合比较各队净利润变化，用来判断策略是否真正赚钱，而不只是提高销量。"],
+        ["salesTrend", "Sales Trend", "销售趋势", "显示本队每轮潜在需求、实际销量、收入、满足率和流失销量，用来观察需求走势和供给缺口。"],
+        ["incomeStatement", "Income statement", "损益表", "显示收入、材料成本、人工成本、销货成本、毛利、运营费用、利息、税和净利润，用来复盘利润来源。"],
+        ["balanceSheet", "Balance sheet", "资产负债表", "显示现金、库存、流动资产、设备账面价值、总资产、银行负债和所有者权益，用来检查财务健康。"],
+        ["cashFlow", "Cash flow", "现金流", "显示销售回款、原料采购、设备投资、营销研发维修、碳信用、利息税费、股息和负债，用来判断现金是否撑得住下一轮。"],
       ];
       const reportViewIds = new Set(reportViews.map(([id]) => id));
 
@@ -946,7 +955,7 @@
         document.getElementById("reports").innerHTML = `
           <div class="analysis-layout">
             <aside class="panel report-menu">
-              ${reportViews.map(([id, label]) => `<button class="report-link ${id === reportView ? "active" : ""}" data-report="${id}" type="button">${label}</button>`).join("")}
+              ${reportViews.map(([id, label, zh]) => `<button class="report-link ${id === reportView ? "active" : ""}" data-report="${id}" type="button"><span>${label}</span><small>${zh}</small></button>`).join("")}
             </aside>
             <div class="report-content">${renderReportView(reportView, team, last)}</div>
           </div>
@@ -1143,9 +1152,11 @@
       }
 
       function reportPanel(title, body) {
-        return `<section class="panel"><h2>${title}</h2><div class="wide-table">${body}</div></section>`;
+        const meta = reportViews.find(([, label]) => label === title);
+        const heading = meta ? `${meta[1]} / ${meta[2]}` : title;
+        const note = meta ? `<p class="helper">${meta[3]}</p>` : "";
+        return `<section class="panel"><h2>${heading}</h2>${note}<div class="wide-table">${body}</div></section>`;
       }
-
       function dataTable(headers, rows) {
         const safeRows = rows.length ? rows : [[`No submitted round yet`, ...headers.slice(1).map(() => "-")]];
         return `<table><thead><tr>${headers.map((head) => `<th>${head}</th>`).join("")}</tr></thead><tbody>${safeRows.map((row) => `<tr>${row.map((cell) => `<td>${cell ?? "-"}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
