@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>MBS 静态练习赛</title>
+    <title>MBS &#32451;&#20064;&#36187; / MBS Practise</title>
     <style>
       :root {
         color-scheme: light;
@@ -348,6 +348,7 @@
         border-radius: 8px;
       }
 
+
       table {
         width: 100%;
         border-collapse: collapse;
@@ -485,8 +486,8 @@
   <body>
     <header class="topbar">
       <div>
-        <p class="eyebrow">Standalone Local Practice</p>
-        <h1>MBS 静态练习赛</h1>
+        <p class="eyebrow">MBS Practise</p>
+        <h1>MBS &#32451;&#20064;&#36187;</h1>
       </div>
       <div class="top-actions">
         <label>
@@ -504,10 +505,6 @@
     </header>
 
     <main>
-      <div class="notice">
-        这是打开即用的本地静态版：不用服务器、不用 localhost、不用 192.168。数据只保存在这台设备的浏览器里，适合四个人围着一台设备练习，或每个人各自独立练习。
-      </div>
-
       <section class="status-strip" id="statusStrip"></section>
 
       <nav class="tabs" aria-label="主要视图">
@@ -1231,6 +1228,7 @@
         let dividend = 0;
         let loan = 0;
         let repayment = 0;
+        let carbon = 0;
 
         if (company.profile === "discount") {
           price = 5.8 + 0.12 * env.quarter + (index % 2) * 0.15;
@@ -1279,7 +1277,7 @@
           production *= 0.86;
         }
         if (company.cash < 450000) loan = 500000;
-        if (env.quarter === 4) {
+        if (env.quarter === environments.length) {
           equipment *= 0.25;
           rawPurchase *= 0.35;
           if (company.equity > 10500000 && company.cash > 1200000) dividend = company.cash * 0.16;
