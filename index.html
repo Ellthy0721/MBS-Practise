@@ -47,20 +47,20 @@
       }
 
       .topbar {
-        min-height: 96px;
+        min-height: 76px;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        gap: 18px;
-        padding: 22px clamp(16px, 4vw, 42px);
+        gap: 14px;
+        padding: 12px clamp(16px, 4vw, 42px);
         background: var(--panel);
         border-bottom: 1px solid var(--line);
       }
 
       .eyebrow {
-        margin: 0 0 4px;
+        margin: 0 0 2px;
         color: var(--accent);
-        font-size: 12px;
+        font-size: 11px;
         font-weight: 900;
         text-transform: uppercase;
         letter-spacing: 0;
@@ -75,7 +75,7 @@
 
       h1 {
         margin-bottom: 0;
-        font-size: clamp(24px, 3vw, 34px);
+        font-size: clamp(22px, 2.5vw, 30px);
         letter-spacing: 0;
       }
 
@@ -513,8 +513,20 @@
         min-width: 132px;
       }
 
+      .api-key-label {
+        width: min(300px, 42vw);
+      }
+
+      .api-label-row {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 10px;
+        width: 100%;
+      }
+
       .api-key-input {
-        width: min(280px, 42vw);
+        width: 100%;
         transition: background 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
       }
 
@@ -533,6 +545,8 @@
         min-height: 16px;
         font-size: 13px;
         font-weight: 900;
+        text-align: right;
+        white-space: nowrap;
       }
 
       .api-status.connected {
@@ -607,6 +621,11 @@
           flex: 1;
         }
 
+
+        .api-key-label {
+          width: 100%;
+        }
+
         .status-strip,
         .kpi-grid,
         .decision-grid {
@@ -650,10 +669,12 @@
             <option value="ai">AI &#27169;&#24335;</option>
           </select>
         </label>
-        <label>
-          DeepSeek API Key
+        <label class="api-key-label">
+          <span class="api-label-row">
+            <span>DeepSeek API Key</span>
+            <span class="api-status" id="apiStatus">DeepSeek &#26410;&#36830;&#25509;</span>
+          </span>
           <input class="api-key-input" id="apiKeyInput" type="password" autocomplete="off" placeholder="&#20165;&#20445;&#23384;&#22312;&#26412;&#26426;" />
-          <span class="api-status" id="apiStatus">DeepSeek &#26410;&#36830;&#25509;</span>
         </label>
         <button class="secondary" id="aiDrawerBtn" type="button">AI &#21161;&#25163;</button>
         <button class="ghost" id="exportBtn" type="button">&#23548;&#20986;&#35760;&#24405;</button>
