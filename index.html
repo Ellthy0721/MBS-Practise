@@ -381,7 +381,9 @@
       }
 
       .rank-row.player {
-        border-color: var(--accent);
+        border: 3px solid var(--accent);
+        background: #f0fdfa;
+        box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.18), var(--shadow);
       }
 
       .rank-num {
@@ -540,86 +542,50 @@
       };
 
       const environments = [
-        {
-          quarter: 1,
-          priceIndex: 1,
-          growthRate: 1.02,
-          seasonalIndex: 96,
-          rawMaterialPrice: 1.28,
-          baseDemand: 5050000,
-          priceElasticity: "Moderate",
-          marketingImpact: "Moderate",
-          rdImpact: "Moderate",
-          maintenanceImpact: "Moderate",
-          timerMinutes: 40,
-        },
-        {
-          quarter: 2,
-          priceIndex: 1.035,
-          growthRate: 1.05,
-          seasonalIndex: 121,
-          rawMaterialPrice: 1.44,
-          baseDemand: 5400000,
-          priceElasticity: "High",
-          marketingImpact: "High",
-          rdImpact: "Moderate",
-          maintenanceImpact: "Moderate",
-          timerMinutes: 30,
-        },
-        {
-          quarter: 3,
-          priceIndex: 1.072,
-          growthRate: 1.01,
-          seasonalIndex: 108,
-          rawMaterialPrice: 1.63,
-          baseDemand: 5200000,
-          priceElasticity: "Moderate",
-          marketingImpact: "Moderate",
-          rdImpact: "High",
-          maintenanceImpact: "High",
-          timerMinutes: 30,
-        },
-        {
-          quarter: 4,
-          priceIndex: 1.096,
-          growthRate: 0.99,
-          seasonalIndex: 132,
-          rawMaterialPrice: 1.52,
-          baseDemand: 5550000,
-          priceElasticity: "High",
-          marketingImpact: "Moderate",
-          rdImpact: "Low",
-          maintenanceImpact: "Moderate",
-          timerMinutes: 30,
-        },
-      ];
+        [1, 1, 1.055, 98, 1.15, 5050000, "High", "High", "High", "Moderate", 40],
+        [2, 1.018, 1.048, 99, 1.22, 5180000, "High", "High", "High", "Moderate", 30],
+        [3, 1.035, 1.04, 101, 1.3, 5320000, "Moderate", "High", "High", "Moderate", 30],
+        [4, 1.052, 1.032, 102, 1.38, 5450000, "Moderate", "Moderate", "High", "Moderate", 30],
+        [5, 1.068, 1.025, 98, 1.45, 5550000, "High", "Moderate", "High", "High", 30],
+        [6, 1.083, 1.018, 99, 1.52, 5650000, "High", "High", "Moderate", "High", 30],
+        [7, 1.096, 1.012, 101, 1.58, 5700000, "Moderate", "High", "Moderate", "High", 30],
+        [8, 1.108, 1.006, 102, 1.62, 5750000, "Moderate", "Moderate", "Moderate", "Moderate", 30],
+        [9, 1.118, 1, 98, 1.6, 5700000, "High", "Moderate", "Low", "Moderate", 30],
+        [10, 1.126, 0.995, 99, 1.56, 5620000, "High", "High", "Low", "Moderate", 30],
+        [11, 1.132, 0.99, 101, 1.5, 5520000, "Moderate", "Moderate", "Low", "Low", 30],
+        [12, 1.136, 0.985, 102, 1.44, 5400000, "High", "Moderate", "Low", "Low", 30],
+      ].map(([quarter, priceIndex, growthRate, seasonalIndex, rawMaterialPrice, baseDemand, priceElasticity, marketingImpact, rdImpact, maintenanceImpact, timerMinutes]) => ({
+        quarter,
+        priceIndex,
+        growthRate,
+        seasonalIndex,
+        rawMaterialPrice,
+        baseDemand,
+        priceElasticity,
+        marketingImpact,
+        rdImpact,
+        maintenanceImpact,
+        timerMinutes,
+      }));
 
       const botProfiles = [
-        ["T02 North Star", "balanced"],
-        ["T03 Cocoa Max", "discount"],
-        ["T04 Victoria", "premium"],
-        ["T05 Harbour", "growth"],
-        ["T06 Apex", "cash"],
-        ["T07 Skyline", "balanced"],
-        ["T08 Jasper", "discount"],
-        ["T09 Meridian", "premium"],
-        ["T10 Horizon", "growth"],
-        ["T11 Bauhinia", "cash"],
-        ["T12 Summit", "balanced"],
+        ["Team A", "balanced"],
+        ["Team B", "growth"],
       ];
 
       const fields = [
-        ["price", "Price", "sales", 3, 9, 0.1, "$", "", "价格影响潜在需求、市场占有率和利润率。官方资料范围为每件 3 至 9 美元。"],
-        ["marketing", "Marketing Expense", "sales", 0, 800000, 10000, "$", "", "营销支出提高产品形象和需求，约 30% 影响会递延，但过高会吞噬利润。"],
-        ["rd", "R&D Expense", "sales", 0, 700000, 10000, "$", "", "研发提升质量与潜在需求，约 60% 影响会递延，更适合前中期投资。"],
-        ["production", "Production Request", "production", 0, 1500000, 10000, "", " units", "生产请求会受原材料和产能限制。Model 2 最大约为一班产能的 1.5 倍。"],
-        ["rawPurchase", "Raw Materials Purchase", "production", 0, 2500000, 10000, "", " units", "本轮购买的原材料只能在下一轮使用，这是比赛中最容易漏掉的滞后。"],
-        ["equipment", "Equipment Investment", "production", 0, 3000000, 10000, "$", "", "每约 20 美元设备投资提升下一期 1 单位产能，同时会产生额外杂项费用。"],
-        ["maintenance", "Maintenance Expense", "production", 0, 600000, 10000, "$", "", "维修影响当轮 Material Conversion Rate，产量高或原料贵时更关键。"],
-        ["loan", "Bank Loan", "finance", 0, 4000000, 10000, "$", "", "贷款在回合开始发生；过高债务会推高利息，债务权益比达到 10 会破产。"],
-        ["repayment", "Repayment", "finance", 0, 4000000, 10000, "$", "", "还款受现金和现有负债限制。现金紧张时优先避免自动透支。"],
-        ["dividend", "Dividend", "finance", 0, 2500000, 10000, "$", "", "股息会影响估值，但 Owner's Equity 低于门槛时系统会限制实际派息。"],
-        ["forecastDemand", "Forecast Demand", "ceo", 0, 1500000, 10000, "", " units", "团队内部校准用，不直接改变系统结果；帮助 CEO 检查生产与营销是否匹配。"],
+        ["price", "Price(&#23450;&#20215;)", "sales", 3, 9, 0.1, "$", "", "&#27599;&#20214;&#24039;&#20811;&#21147;&#21806;&#20215;&#12290;&#20215;&#26684;&#36234;&#20302;&#36890;&#24120;&#38656;&#27714;&#36234;&#39640;&#65292;&#20294;&#21033;&#28070;&#29575;&#20250;&#19979;&#38477;&#65307;&#23448;&#26041;&#33539;&#22260;&#20026; 3 &#33267; 9 &#32654;&#20803;&#12290;"],
+        ["marketing", "Marketing Expense(&#24066;&#22330;&#25512;&#24191;&#36153;)", "sales", 0, 800000, 10000, "$", "", "&#29992;&#20110;&#25552;&#21319;&#20135;&#21697;&#24418;&#35937;&#21644;&#38656;&#27714;&#12290;&#23448;&#26041;&#35828;&#26126;&#33829;&#38144;&#25928;&#26524;&#39640;&#20302;&#21462;&#20915;&#20110;&#29615;&#22659;&#65292;&#24182;&#26377;&#36882;&#24310;&#24433;&#21709;&#12290;"],
+        ["rd", "R&D Expense(&#30740;&#21457;&#36153;)", "sales", 0, 700000, 10000, "$", "", "&#29992;&#20110;&#25552;&#21319;&#20135;&#21697;&#36136;&#37327;&#21644;&#28508;&#22312;&#38656;&#27714;&#12290;&#23448;&#26041; Level 2 &#29615;&#22659;&#20013; R&D effect &#20026; High&#12290;"],
+        ["production", "Production Request(&#29983;&#20135;&#35831;&#27714;/&#20998;&#37197;)", "production", 0, 1500000, 10000, "", " units", "&#35745;&#21010;&#29983;&#20135;&#25968;&#37327;&#12290;&#23454;&#38469;&#29983;&#20135;&#20250;&#21463;&#19979;&#19968;&#26399;&#20135;&#33021;&#12289;&#21152;&#29677;&#19978;&#38480;&#12289;&#21407;&#26448;&#26009;&#21644;&#36716;&#25442;&#29575;&#38480;&#21046;&#12290;"],
+        ["rawPurchase", "Material Purchasing Quantity(&#21407;&#26448;&#26009;&#37319;&#36141;&#37327;)", "production", 0, 2500000, 10000, "", " units", "&#26412;&#36718;&#36141;&#20080;&#30340;&#21407;&#26448;&#26009;&#21482;&#33021;&#22312;&#19979;&#19968;&#36718;&#20351;&#29992;&#12290;&#23448;&#26041;&#21021;&#22987;&#20540;&#20026; 1,200,000&#12290;"],
+        ["equipment", "Equipment Investment(&#35774;&#22791;&#25237;&#36164;)", "production", 0, 3000000, 10000, "$", "", "&#27599;&#32422; 20 &#32654;&#20803;&#25237;&#36164;&#25552;&#21319;&#19979;&#19968;&#26399; 1 &#21333;&#20301;&#20135;&#33021;&#65307;&#21333;&#26399;&#25237;&#36164;&#19981;&#24212;&#36229;&#36807; Owner's Equity &#30340;&#19968;&#21322;&#12290;"],
+        ["maintenance", "Maintenance Expense(&#32500;&#20462;&#36153;)", "production", 0, 600000, 10000, "$", "", "&#24433;&#21709;&#29983;&#20135;&#25928;&#29575;&#21644; Material Conversion Rate&#65292;&#20174;&#32780;&#25913;&#21464;&#26448;&#26009;&#28040;&#32791;&#25104;&#26412;&#12290;"],
+        ["carbon", "Carbon Credit(&#30899;&#20449;&#29992;/&#20943;&#25490;&#39044;&#31639;)", "production", 0, 700000, 10000, "$", "", "&#23448;&#26041; Level 2 &#26032;&#22686;&#39033;&#65306;&#29992;&#20110;&#38477;&#20302;&#30899;&#25490;&#25918;&#22788;&#32602;&#39118;&#38505;&#65292;&#20135;&#37327;&#39640;&#26102;&#23588;&#20854;&#35201;&#26816;&#26597;&#12290;"],
+        ["loan", "Bank Loan(&#38134;&#34892;&#36151;&#27454;)", "finance", 0, 4000000, 10000, "$", "", "&#36151;&#27454;&#22312;&#22238;&#21512;&#24320;&#22987;&#21457;&#29983;&#65307;&#36807;&#39640;&#20538;&#21153;&#20250;&#25512;&#39640;&#21033;&#24687;&#65292;&#20538;&#21153;&#26435;&#30410;&#27604;&#36798;&#21040; 10 &#20250;&#30772;&#20135;&#12290;"],
+        ["repayment", "Repayment(&#36824;&#27454;)", "finance", 0, 4000000, 10000, "$", "", "&#36824;&#27454;&#21463;&#29616;&#37329;&#21644;&#29616;&#26377;&#36127;&#20538;&#38480;&#21046;&#12290;&#29616;&#37329;&#32039;&#24352;&#26102;&#20248;&#20808;&#36991;&#20813;&#33258;&#21160;&#36879;&#25903;&#12290;"],
+        ["dividend", "Dividend(&#32929;&#24687;)", "finance", 0, 2500000, 10000, "$", "", "&#27966;&#24687;&#20250;&#20943;&#23569;&#29616;&#37329;&#65307;&#21482;&#26377;&#26435;&#30410;&#21644;&#29616;&#37329;&#36275;&#22815;&#20581;&#24247;&#26102;&#25165;&#36866;&#21512;&#32771;&#34385;&#12290;"],
+        ["forecastDemand", "Forecast Demand(&#38656;&#27714;&#39044;&#27979;)", "ceo", 0, 1500000, 10000, "", " units", "&#22242;&#38431;&#20869;&#37096;&#26657;&#20934;&#29992;&#65292;&#19981;&#30452;&#25509;&#25913;&#21464;&#31995;&#32479;&#32467;&#26524;&#65307;&#24110;&#21161; CEO &#26816;&#26597;&#29983;&#20135;&#19982;&#33829;&#38144;&#26159;&#21542;&#21305;&#37197;&#12290;"],
       ];
 
       let role = localStorage.getItem(ROLE_KEY) || "ceo";
@@ -698,6 +664,7 @@
           price: 6.4,
           marketing: 150000,
           rd: 90000,
+          carbon: 0,
           production: 450000,
           rawPurchase: 650000,
           equipment: 120000,
@@ -771,7 +738,7 @@
       function renderStatus() {
         const company = state.teams[0];
         const last = latest(company);
-        const env = environments[Math.min(state.quarter - 1, 3)];
+        const env = environments[Math.min(state.quarter - 1, environments.length - 1)];
         const rank = rankings().findIndex((team) => team.id === company.id) + 1;
         document.getElementById("statusStrip").innerHTML = [
           metric("当前回合", state.status === "finished" ? "Finished" : `Q${state.quarter}`, state.status === "finished" ? "练习已结束" : `${env.timerMinutes} 分钟正式决策时间`),
@@ -786,7 +753,7 @@
       function renderCommand() {
         const company = state.teams[0];
         const last = latest(company);
-        const env = environments[Math.min(state.quarter - 1, 3)];
+        const env = environments[Math.min(state.quarter - 1, environments.length - 1)];
         document.getElementById("command").innerHTML = `
           <div class="grid command-grid">
             <section class="panel">
@@ -940,6 +907,7 @@
                 ["Cash Balance", money(team.cash)],
                 ["Raw Material Purchase", money(last.rawPurchaseCost || 0)],
                 ["Equipment Investment", money(last.decision?.equipment || 0)],
+                ["Carbon Credit", money(last.decision?.carbon || 0)],
                 ["Dividend Paid", money(last.dividend || 0)],
                 ["Bank Debt", money(team.debt)],
                 ["Current Ratio", decFmt.format(last.currentRatio || 0)],
@@ -1011,7 +979,7 @@
       }
 
       function processQuarter(playerDecision) {
-        if (state.quarter > 4) return;
+        if (state.quarter > environments.length) return;
         const env = environments[state.quarter - 1];
         const decisions = new Map();
         state.teams.forEach((company, index) => {
@@ -1078,7 +1046,7 @@
         });
         state.events.unshift({ at: new Date().toISOString(), message: `Quarter ${env.quarter} processed. Reports and ranking are updated.` });
         state.quarter += 1;
-        state.status = state.quarter > 4 ? "finished" : "decision";
+        state.status = state.quarter > environments.length ? "finished" : "decision";
         state.playerDraft = nextSuggestedDraft(state.teams[0], state.playerDraft);
         draft = { ...state.playerDraft };
       }
@@ -1107,7 +1075,8 @@
         const equipmentMisc = 0.0000001 * d.equipment * d.equipment;
         const cogs = materialCost + laborCost;
         const grossProfit = revenue - cogs;
-        const operatingExpense = d.marketing + d.rd + d.maintenance + adminExpense + purchaseOps + warehouseFinished + warehouseRaw + equipmentMisc + depreciation;
+        const carbonPenalty = Math.max(0, production * 0.08 - d.carbon * 0.6);
+        const operatingExpense = d.marketing + d.rd + d.maintenance + d.carbon + carbonPenalty + adminExpense + purchaseOps + warehouseFinished + warehouseRaw + equipmentMisc + depreciation;
         let debt = team.debt;
         let cash = team.cash;
         const repayment = Math.min(d.repayment, debt, cash);
@@ -1126,7 +1095,7 @@
 
         if (includeFinance) {
           cash += revenue - d.marketing - d.rd - d.maintenance - purchaseOps - adminExpense - warehouseFinished - warehouseRaw;
-          cash -= rawPurchaseCost + d.equipment + equipmentMisc + interest + tax + allowedDividend;
+          cash -= rawPurchaseCost + d.equipment + d.carbon + carbonPenalty + equipmentMisc + interest + tax + allowedDividend;
           if (cash < 0) {
             debt += Math.abs(cash);
             cash = 0;
@@ -1179,6 +1148,7 @@
           fillRate: salesVolume / Math.max(1, potentialDemand),
           dsi: cogs > 0 ? (365 * (finishedInventory * 3 * env.priceIndex)) / cogs : 0,
           score: 0,
+          carbonPenalty,
           bankrupt: debtRatio >= 10 || equity <= 0,
         };
       }
@@ -1281,6 +1251,7 @@
           production *= 1.2;
           rawPurchase *= 1.3;
           equipment = 240000 + 60000 * env.quarter;
+          carbon = 45000 + 6000 * env.quarter;
         } else if (company.profile === "cash") {
           price = 6.75 + 0.1 * env.quarter;
           marketing = 95000 + 12000 * env.quarter;
@@ -1325,6 +1296,7 @@
           loan,
           repayment,
           dividend,
+          carbon,
           forecastDemand: production,
           strategyNote: `${company.profile} bot`,
         });
@@ -1349,7 +1321,7 @@
           next.rd = Math.round(previous.rd * 0.85);
           next.dividend = 0;
         }
-        if (state.quarter === 4) {
+        if (state.quarter === environments.length) {
           next.equipment = Math.round(previous.equipment * 0.35);
           next.rawPurchase = Math.round(previous.rawPurchase * 0.45);
         }
@@ -1393,6 +1365,7 @@
           loan: whole(clamp(d.loan, 0, 4000000)),
           repayment: whole(clamp(d.repayment, 0, 4000000)),
           dividend: whole(clamp(d.dividend, 0, 2500000)),
+          carbon: whole(clamp(d.carbon, 0, 700000)),
           forecastDemand: whole(clamp(d.forecastDemand, 0, 1500000)),
           strategyNote: String(d.strategyNote || "").slice(0, 600),
         };
